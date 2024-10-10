@@ -1,10 +1,11 @@
 # flake8: noqa: E501
+import pathlib
+import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
-
-from cinema.utils import get_image_path
+from django.utils.text import slugify
 
 
 class CinemaHall(models.Model):
@@ -37,6 +38,11 @@ class Actor(models.Model):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+
+def get_image_path(instance: "Movie", filename: str) -> pathlib.Path:
+    filename = f"{slugify(instance.title)}-{uuid.uuid4()}" + pathlib.Path(filename).suffix
+    return pathlib.Path("upload/movies/") / pathlib.Path(filename)
 
 
 class Movie(models.Model):
